@@ -20,6 +20,7 @@ import mission.behaviour.PositionBehaviour;
 import mission.behaviour.StaticPositionBehaviour;
 import mission.boss.BuilderBaseBoss;
 import mission.boss.HoneycombBoss;
+import mission.boss.LocustSpawnBoss;
 import mission.gameobject.Component;
 import mission.gameobject.Enemy;
 import mission.gameobject.Mech;
@@ -49,10 +50,14 @@ public class EnemyFactory {
 		// BUILDER
 		BUILDER_ARMED,
 		BUILDER_BASIC,
-		LASER_STAR,
-		PILLAR,
+		BUILDER_LASER_STAR,
+		BUILDER_PILLAR,
 		DIRECTEDDRONE,
-		DRONEMAKER
+		BUILDER_DRONEMAKER,
+		
+		// LOCUST
+		LOCUST_ARMOURED_DRONE,
+		LOCUST_DRONE
 	}
 	
 	/**
@@ -106,16 +111,20 @@ public class EnemyFactory {
 			return makeBuilder(true);
 		case BUILDER_BASIC:
 			return makeBuilder(false);
-		case LASER_STAR:
+		case BUILDER_LASER_STAR:
 			return makeLaserStar();
-		case PILLAR:
+		case BUILDER_PILLAR:
 			return makePillar(1);
 		case TRAVELDRONE:
 			return makeTravellingDrone();
 		case DIRECTEDDRONE:
 			return makeDirectedDrone();
-		case DRONEMAKER:
+		case BUILDER_DRONEMAKER:
 			return makeDroneMaker();
+		case LOCUST_ARMOURED_DRONE:
+			return makeArmouredStraightShot();
+		case LOCUST_DRONE:
+			return makeLocustDrone();
 		case DRONE:
 		default:
 			return makeDrone();	
@@ -909,12 +918,13 @@ public class EnemyFactory {
 	/**
 	 * @return Locust mid-boss with vulnerable channels.
 	 */
-	public static Enemy makeLocustBoss() {
+	public static Enemy makeLocustBoss(boolean locust) {
 		
 		// create body
 		List<Component> list = new ArrayList<Component>(1);
 		Component c = new Component(Shape.scale(DefaultShapes.basicHex,Mech.MECH_RADIUS), new Point2D(), -1);
-		c.setColour(GameGUI.enemyLight);
+		if(locust) c.setColour(LocustSpawnBoss.locustColor);
+		else c.setColour(GameGUI.enemy);
 		list.add(c);
 		
 		Component weaponComps[] = new Component[4];
@@ -924,22 +934,24 @@ public class EnemyFactory {
 			
 			c = new Component(
 				Shape.scale(DefaultShapes.basicHex,Mech.MECH_RADIUS),
-				new Point2D(getXCoord(r, i),getYCoord(r,i)), 15);
-			c.setColour(GameGUI.enemy);
+				new Point2D(getXCoord(r, i),getYCoord(r,i)), 25);
 			list.add(c);
 			
-			// make indestructable parts
+			// make invulnerable parts
 			if((i!=0 && i!=r*3)) {
 				c.setIndestructable(true);
 				c.setColour(GameGUI.wreckage);
 			} else {
 				c.setShowHealth(true);
+				if(locust) c.setColour(LocustSpawnBoss.locustColorDark);
+				else c.setColour(GameGUI.enemyDark);
 			}
 			
 			// remember weapon positions
 			if(r==2 && (i==2 || i==4 || i==8 || i==10)) {
 				c.setShowHealth(false);
-				c.setColour(GameGUI.enemy);
+				if(locust) c.setColour(LocustSpawnBoss.locustColorDark);
+				else c.setColour(GameGUI.enemyDark);
 				weaponComps[index] = c;
 				index++;
 			}
@@ -964,6 +976,79 @@ public class EnemyFactory {
 		}
 		
 		e.setBehaviour(new LocustBossBehaviour(new Point2D(Board.BOARD_SIZE/2,Board.BOARD_SIZE/3)));
+		return e;
+	}
+	
+	/**
+	 * @return straight-shot armoured enemy with no behaviour
+	 */
+	private static Enemy makeArmouredStraightShot() {
+		
+		// body
+		List<Component> list = new ArrayList<Component>(1);
+		Component head = new Component(Shape.scale(DefaultShapes.basicHex,Mech.MECH_RADIUS), new Point2D(), -1);
+		head.setColour(LocustSpawnBoss.locustColor);
+		list.add(head);
+		
+		for(int i=0; i<6; i++) {
+			if(i==3) continue;
+			Component c = new Component(Shape.scale(DefaultShapes.basicHex,Mech.MECH_RADIUS), new Point2D(), -1);
+			c.getPos().x = getXCoord(1, i);
+			c.getPos().y = getYCoord(1, i);
+			c.setColour(GameGUI.wreckage);
+			c.setIndestructable(true);
+			list.add(c);
+		}
+		
+		// make enemy
+		Enemy e = new Enemy(list,
+				new Point2D(),
+				new Point2D(), 30, Mech.MECH_SPEED);
+		
+		// weapon
+		Bullet b = new Bullet(e, true, Shape.scale(DefaultShapes.basicHex,Bullet.BULLET_RADIUS), new Point2D(), new Point2D());
+		b.getMods().put(BulletMod.MEGA, 1);
+		head.setWeapon(new Weapon(b, 20f, ShotType.STRAIGHTDUAL));
+		
+		// behaviour
+		e.setAttackCycle(new MechAttack());
+		e.getAttackCycle().addVolley(e.getAttackCycle().new Volley(new Component[] {head},120,120));	
+		
+		// starting position
+		e.getPos().x = (float)(Board.BOARD_SIZE*Math.random());
+		e.getPos().y = -e.getMaxY();
+		
+		return e;
+	}
+	
+	/**
+	 * @return straight-dual-shot enemy with StaticPositionBehaviour
+	 */
+	private static Enemy makeLocustDrone() {
+		
+		// create body
+		List<Component> list = new ArrayList<Component>(1);
+		Component c = new Component(Shape.scale(DefaultShapes.basicHex,Mech.MECH_RADIUS), new Point2D(), -1);
+		c.setColour(LocustSpawnBoss.locustColor);
+		list.add(c);
+		
+		// make enemy
+		Enemy e = new Enemy(list,
+				new Point2D((float) (Board.BOARD_SIZE*Math.random()),-Mech.MECH_RADIUS),
+				new Point2D(), 6, Mech.MECH_SPEED);
+		
+		// weapon
+		Bullet b = new Bullet(e, true, Shape.scale(DefaultShapes.basicHex,Bullet.BULLET_RADIUS), new Point2D(), new Point2D());
+		c.setWeapon(new Weapon(b, 10f, ShotType.STRAIGHTDUAL));
+		
+		// create behaviour
+		e.setAttackCycle(new MechAttack());
+		e.getAttackCycle().addVolley(e.getAttackCycle().new Volley(new Component[] {c},60,120));
+		
+		e.setBehaviour(new StaticPositionBehaviour(new Point2D(
+				(float)(Math.random()*Board.BOARD_SIZE), 
+				(float)(Math.random()*Board.BOARD_SIZE/3f)),WAITTIME));
+
 		return e;
 	}
 }

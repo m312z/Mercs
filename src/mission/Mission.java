@@ -68,11 +68,18 @@ public class Mission {
 	TreeMap<String,ShipController> controllers;
 	
 	public Mission(Frame frame, LevelType levelType) {
+		
 		this.frame = frame;
 		this.gui = new GameGUI();
-		this.overlay = new HudOverlay();
 		this.controllers = new TreeMap<String,ShipController>();
 		this.board = new Board(levelType);
+		
+		makeOverlay();
+	}
+	
+	private void makeOverlay() {
+		
+		this.overlay = new HudOverlay();
 		
 		Shape tbs = new Shape(new Point2D[] {
 		});
@@ -104,35 +111,41 @@ public class Mission {
 		ButtonElement startButton = new ButtonElement("start_button", bs, new Point2D(SCREEN_SIZE[0]/2, SCREEN_SIZE[1]/2 - hs*2), Color.BLACK, GameGUI.wreckage, Color.WHITE);
 		startButton.addCommand(InteractionType.MOUSE_DOWN, "start");
 		startButton.addElement(new TextElement("sbt", bs, new Point2D(0,0), "RESUME", FontType.FONT_32));
-		startButton.setVisible(false);
 		
 		ButtonElement soundButton = new ButtonElement("sound_button", bs, new Point2D(SCREEN_SIZE[0]/2, SCREEN_SIZE[1]/2 - hs), Color.BLACK, GameGUI.wreckage, Color.WHITE);
 		soundButton.addCommand(InteractionType.MOUSE_DOWN, "sound");
 		soundButton.addElement(new TextElement("sbt_on", bs, new Point2D(), "SOUNDS ARE ON", FontType.FONT_32));
 		soundButton.addElement(new TextElement("sbt_off", bs, new Point2D(), "SOUNDS ARE OFF", FontType.FONT_32));
-		soundButton.setVisible(false);
-		
+				
 		ButtonElement musicButton = new ButtonElement("music_button", bs, new Point2D(SCREEN_SIZE[0]/2, SCREEN_SIZE[1]/2), Color.BLACK, GameGUI.wreckage, Color.WHITE);
 		musicButton.addCommand(InteractionType.MOUSE_DOWN, "music");
 		musicButton.addElement(new TextElement("mbt_on", bs, new Point2D(), "MUSIC IS ON", FontType.FONT_32));
 		musicButton.addElement(new TextElement("mbt_off", bs, new Point2D(), "MUSIC IS OFF", FontType.FONT_32));
-		musicButton.setVisible(false);
-		
+				
 		ButtonElement restartButton = new ButtonElement("restart_button", bs, new Point2D(SCREEN_SIZE[0]/2, SCREEN_SIZE[1]/2 + hs), Color.BLACK, GameGUI.wreckage, Color.WHITE);
 		restartButton.addCommand(InteractionType.MOUSE_DOWN, "restart");
 		restartButton.addElement(new TextElement("rbt", bs,new Point2D(), "RESTART", FontType.FONT_32));
-		restartButton.setVisible(false);
-		
+				
 		ButtonElement quitButton = new ButtonElement("quit_button", bs, new Point2D(SCREEN_SIZE[0]/2, SCREEN_SIZE[1]/2 + 2*hs), Color.BLACK, GameGUI.wreckage, Color.WHITE);
 		quitButton.addCommand(InteractionType.MOUSE_DOWN, "quit");
 		quitButton.addElement(new TextElement("qbt", bs,new Point2D(), "QUIT", FontType.FONT_32));
-		quitButton.setVisible(false);
-		
+
+		startButton.setVisible(!running);
+		soundButton.setVisible(!running);
+		musicButton.setVisible(!running);
+		restartButton.setVisible(!running);
+		quitButton.setVisible(!running);
+				
 		overlay.addElement(startButton);
 		overlay.addElement(soundButton);
 		overlay.addElement(musicButton);
 		overlay.addElement(restartButton);
 		overlay.addElement(quitButton);
+		
+		overlay.getElement("sbt_on",overlay.getElement("sound_button")).setVisible(SoundManager.isSoundPlaying());
+		overlay.getElement("sbt_off",overlay.getElement("sound_button")).setVisible(!SoundManager.isSoundPlaying());
+		overlay.getElement("mbt_on",overlay.getElement("music_button")).setVisible(SoundManager.isMusicPlaying());
+		overlay.getElement("mbt_off",overlay.getElement("music_button")).setVisible(!SoundManager.isMusicPlaying());
 	}
 	
 	public void addController(ShipController controller) {
@@ -198,6 +211,15 @@ public class Mission {
 			// opengl update
 			Display.update();
 			Display.sync(60);
+			if (Display.wasResized()) {
+	            frame.setDisplayMode(
+	            		Display.getWidth(),
+	            		Display.getHeight(),
+	            		Frame.FULLSCREEN);
+	            makeOverlay();
+			}
+			
+			// openAL update
 			SoundManager.update();
 
 			if(Display.isCloseRequested())
@@ -367,4 +389,3 @@ public class Mission {
 		return (Sys.getTime() * 1000) / Sys.getTimerResolution();
 	}
 }
-

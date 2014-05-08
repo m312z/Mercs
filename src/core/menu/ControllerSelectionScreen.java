@@ -55,6 +55,11 @@ public class ControllerSelectionScreen extends SetupScreen {
 		gamepadSelected = new boolean[ControllerEnvironment.getDefaultEnvironment().getControllers().length];
 		controllers = new ShipController[2];
 		
+		makeOverlay();
+	}
+	
+	private void makeOverlay() {
+		
 		// create menu UI
 		menuOverlay = new HudOverlay();
 		float hs = SCREEN_SIZE[1]/10;
@@ -88,7 +93,14 @@ public class ControllerSelectionScreen extends SetupScreen {
 			// opengl update
 			Display.update();
 			Display.sync(60);
-						
+			if (Display.wasResized()) {
+	            frame.setDisplayMode(
+	            		Display.getWidth(),
+	            		Display.getHeight(),
+	            		Frame.FULLSCREEN);
+	            makeOverlay();
+			}
+			
 			if(Display.isCloseRequested())
 				finished = true;
 		}

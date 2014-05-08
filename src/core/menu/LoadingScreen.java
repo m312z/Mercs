@@ -27,17 +27,6 @@ public class LoadingScreen extends SetupScreen {
 		
 		// create menu UI
 		menuOverlay = new HudOverlay();
-		/*
-		TextElement text = new TextElement(
-				"loading_string",
-				Shape.nullShape,
-				new Point2D(
-						(Frame.SCREEN_SIZE[0] - FontManager.trueTypeFont_32.getWidth("Loading"))/2f,
-						FontManager.trueTypeFont_32.getHeight()),
-				"Loading",
-				FontType.FONT_32);
-		menuOverlay.addElement(text);
-		*/
 	}
 
 	public void start() {
@@ -80,6 +69,12 @@ public class LoadingScreen extends SetupScreen {
 			// opengl update
 			Display.update();
 			Display.sync(60);
+			if (Display.wasResized()) {
+	            frame.setDisplayMode(
+	            		Display.getWidth(),
+	            		Display.getHeight(),
+	            		Frame.FULLSCREEN);
+			}
 						
 			if(Display.isCloseRequested())
 				finished = true;

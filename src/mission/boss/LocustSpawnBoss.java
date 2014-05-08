@@ -28,12 +28,10 @@ import phys.Shape;
 public class LocustSpawnBoss extends Enemy {
 	
 	public static final Color locustColor = new Color(105,139,34);
+	public static final Color locustColorDark = new Color(80,115,20);
 	
 	public LocustSpawnBoss(List<Component> components) {
-		super(components, new Point2D(
-					Board.BOARD_SIZE/2f,
-					(float) -(9*Mech.MECH_RADIUS*Math.sin(Math.toRadians(60)))),
-				new Point2D(0, 1), 200, Mech.MECH_SPEED/2f);
+		super(components, new Point2D(), new Point2D(0, 1), 200, Mech.MECH_SPEED/2f);
 	}
 		
 	public static Enemy makeBoss() {
@@ -56,6 +54,7 @@ public class LocustSpawnBoss extends Enemy {
 		e.setBehaviour(e.new LocustSpawnBehaviour());
 		
 		// start position
+		e.getPos().x = Board.BOARD_SIZE/2f;
 		e.getPos().y = -e.getMaxY();
 		
 		return e;

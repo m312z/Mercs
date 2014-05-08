@@ -282,13 +282,13 @@ public class Frame {
 
 	public Frame() {
 		
-		WINDOW_SIZE[1] = (int)(WINDOW_SIZE[0]*(
-				Toolkit.getDefaultToolkit().getScreenSize().height
-				/(float)Toolkit.getDefaultToolkit().getScreenSize().width));
+		WINDOW_SIZE[1] = (int)(WINDOW_SIZE[0]*(Toolkit.getDefaultToolkit().getScreenSize().height
+						/(float)Toolkit.getDefaultToolkit().getScreenSize().width));
 		setDisplayMode(WINDOW_SIZE[0], WINDOW_SIZE[1], FULLSCREEN);
 
 		try {
 			Display.setTitle("");//("Mercenaries");
+			Display.setResizable(true);
 			Display.create();
 		} catch (LWJGLException e) {
 			e.printStackTrace();
@@ -310,8 +310,9 @@ public class Frame {
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-		glViewport(0, 0, Display.getDisplayMode().getWidth(), Display
-				.getDisplayMode().getHeight());
+		glViewport(0, 0,
+				Display.getDisplayMode().getWidth(),
+				Display.getDisplayMode().getHeight());
 		glMatrixMode(GL_MODELVIEW);
 
 		glMatrixMode(GL_PROJECTION);
@@ -355,8 +356,7 @@ public class Frame {
 						if ((targetDisplayMode == null)
 								|| (current.getFrequency() >= freq))
 							if ((targetDisplayMode == null)
-									|| (current.getBitsPerPixel() > targetDisplayMode
-											.getBitsPerPixel())) {
+									|| (current.getBitsPerPixel() > targetDisplayMode.getBitsPerPixel())) {
 								targetDisplayMode = current;
 								freq = targetDisplayMode.getFrequency();
 							}
@@ -387,14 +387,16 @@ public class Frame {
 
 			// set the view position
 			if (Display.isCreated()) {
-				glViewport(0, 0, Display.getDisplayMode().getWidth(), Display
-						.getDisplayMode().getHeight());
+				glViewport(0, 0,
+						Display.getDisplayMode().getWidth(),
+						Display.getDisplayMode().getHeight());
 				glMatrixMode(GL_MODELVIEW);
 
 				glMatrixMode(GL_PROJECTION);
 				glLoadIdentity();
-				glOrtho(0, Display.getDisplayMode().getWidth(), Display
-						.getDisplayMode().getHeight(), 0, 1, -1);
+				glOrtho(0,
+						Display.getDisplayMode().getWidth(),
+						Display.getDisplayMode().getHeight(), 0, 1, -1);
 				glMatrixMode(GL_MODELVIEW);
 			}
 

@@ -47,6 +47,11 @@ public class LevelSelectionScreen extends SetupScreen {
 		this.gui = new LevelSelectionGUI();
 		this.controllers = controllers;
 		
+		makeOverlay();
+	}
+	
+	private void makeOverlay() {
+		
 		// create menu UI
 		menuOverlay = new HudOverlay();
 		float hs = SCREEN_SIZE[1]/10;
@@ -86,6 +91,13 @@ public class LevelSelectionScreen extends SetupScreen {
 			// opengl update
 			Display.update();
 			Display.sync(60);
+			if (Display.wasResized()) {
+	            frame.setDisplayMode(
+	            		Display.getWidth(),
+	            		Display.getHeight(),
+	            		Frame.FULLSCREEN);
+	            makeOverlay();
+			}
 						
 			if(Display.isCloseRequested())
 				finished = true;

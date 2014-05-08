@@ -124,7 +124,7 @@ public class Player extends Mech {
 		amount = damageShield(amount, component, board);
 		if(amount==0)
 			return;
-//		damageHull(amount, component, board);
+		damageHull(amount, component, board);
 	}
 	
 	@Override

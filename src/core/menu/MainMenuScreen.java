@@ -32,6 +32,10 @@ public class MainMenuScreen extends SetupScreen {
 		
 	public MainMenuScreen(Frame frame) {
 		super(frame);
+		makeOverlay();
+	}
+	
+	private void makeOverlay() {
 		
 		// create menu UI
 		menuOverlay = new HudOverlay();
@@ -70,15 +74,15 @@ public class MainMenuScreen extends SetupScreen {
 		menuOverlay.addElement(soundButton);
 		menuOverlay.addElement(musicButton);
 		menuOverlay.addElement(quitButton);
-	}
-
-	public void start() {
 		
 		menuOverlay.getElement("mbt_on",menuOverlay.getElement("music_button")).setVisible(SoundManager.isMusicMute());
 		menuOverlay.getElement("mbt_off",menuOverlay.getElement("music_button")).setVisible(!SoundManager.isMusicMute());
 		menuOverlay.getElement("sbt_on",menuOverlay.getElement("sound_button")).setVisible(SoundManager.isSoundPlaying());
 		menuOverlay.getElement("sbt_off",menuOverlay.getElement("sound_button")).setVisible(!SoundManager.isSoundPlaying());
-		
+	}
+
+	public void start() {
+				
 		finished = false;
 		
 		while(!finished) {
@@ -93,6 +97,13 @@ public class MainMenuScreen extends SetupScreen {
 			// opengl update
 			Display.update();
 			Display.sync(60);
+			if (Display.wasResized()) {
+	            frame.setDisplayMode(
+	            		Display.getWidth(),
+	            		Display.getHeight(),
+	            		Frame.FULLSCREEN);
+	            makeOverlay();
+			}
 						
 			if(Display.isCloseRequested())
 				finished = true;
@@ -135,6 +146,6 @@ public class MainMenuScreen extends SetupScreen {
 	public void fullScreen() {
 		FULLSCREEN = FULLSCREEN^true;
 		frame.setDisplayMode(WINDOW_SIZE[0], WINDOW_SIZE[1], FULLSCREEN);
-		finished = true;
+		makeOverlay();
 	}
 }

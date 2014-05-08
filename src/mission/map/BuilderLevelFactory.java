@@ -142,14 +142,14 @@ public class BuilderLevelFactory implements LevelFactory {
 
 	private Event makeDroneSpawnerEvent() {
 		SpawnEvent event = new SpawnEvent();
-		Enemy e = EnemyFactory.makeBasicEnemy(EnemyType.DRONEMAKER);
+		Enemy e = EnemyFactory.makeBasicEnemy(EnemyType.BUILDER_DRONEMAKER);
 		event.addEnemy(e);
 		return event;
 	}
 
 	private Event makeLaserEvent() {
 		SpawnEvent event = new SpawnEvent();
-		Enemy e = EnemyFactory.makeBasicEnemy(EnemyType.LASER_STAR);
+		Enemy e = EnemyFactory.makeBasicEnemy(EnemyType.BUILDER_LASER_STAR);
 		event.addEnemy(e);
 		return event;
 	}

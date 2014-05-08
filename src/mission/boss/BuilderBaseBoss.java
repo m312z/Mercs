@@ -226,6 +226,22 @@ public class BuilderBaseBoss extends Enemy {
 		return e;
 	}
 	
+	public void destroy(Board board, boolean score) {
+		super.destroy(board, score);
+		
+		// add bases
+		Iterator<Component> cit = components.iterator();
+		while(cit.hasNext()) {
+			Component c = cit.next();
+			Base b = new Base(c.getShape(), new Point2D(
+					c.getPos().x + c.getPos().x,
+					c.getPos().y + c.getPos().y));
+			if(encounter<4)
+				b.getDirection().y = -1;
+			board.addBase(b);
+		}
+	}
+	
 	public class BuilderBossBehaviour implements MechBehaviour {
 
 		Point2D targetLaser = new Point2D(

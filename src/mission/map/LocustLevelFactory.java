@@ -5,8 +5,13 @@ import static mission.EnemyFactory.WAITTIME;
 import java.util.List;
 import java.util.Map;
 
+import phys.Point2D;
+
+import mission.Board;
 import mission.EnemyFactory;
 import mission.EnemyFactory.EnemyType;
+import mission.behaviour.StaticPositionBehaviour;
+import mission.boss.LocustBaseBoss;
 import mission.boss.LocustSpawnBoss;
 import mission.gameobject.Base;
 import mission.gameobject.Enemy;
@@ -22,14 +27,11 @@ public class LocustLevelFactory implements LevelFactory {
 	@Override
 	public float populate(int level, Map<Integer,Event> events, Map<Base,Event> baseEvents) {
 
-		level = 3;
-		
 		int eventTime  = 0;
-
+	
 		// wave details
 		switch(level) {
 		case 1:
-		case 2:
 			// trains
 			for(int i=0;i<5+level;i++) {
 				int time = (int) (Math.random()*(200+4*WAITTIME));
@@ -57,14 +59,14 @@ public class LocustLevelFactory implements LevelFactory {
 
 			// 300 + 4*W: boss
 			events.put(eventTime, new PauseEvent());
-			events.put(eventTime+2, makeMidBossSpawnEvent());
+			events.put(eventTime+2, makeMidBossSpawnEvent(false));
 			events.put(eventTime+4, new PauseEvent());
 			eventTime+=200;
 			
 			// 500 + 4*W: finish
 			break;
 			
-		case 3:
+		case 2:
 			
 			// 200: start
 			eventTime = 200;		
@@ -76,11 +78,35 @@ public class LocustLevelFactory implements LevelFactory {
 			
 			// 400 + 2*W: locust boss (spawn)
 			events.put(eventTime, new PauseEvent());
-			events.put(eventTime+2, makeLocustSpawnEvent());
+			events.put(eventTime+2, makeLocustSpawnBossEvent());
+			events.put(eventTime+4, new PauseEvent());
+			eventTime+=100;
+											
+			// 500 + 2*W: finish
+			break;
+
+		case 3:
+			
+			// 200: start
+			eventTime = 200;
+			for(int i=0;i<2;i++) {
+				events.put(eventTime, makeLocustSpawnEvent(level));
+				eventTime+=WAITTIME + 100;
+				
+			}
+			
+			// 400 + 2*W: mid-boss 
+			events.put(eventTime, new PauseEvent());
+			events.put(eventTime+2, makeMidBossSpawnEvent(true));
 			events.put(eventTime+4, new PauseEvent());
 			eventTime+=100;
 			
-			// 500 + 2*W: finish
+			// 500 + 2*W: locust boss (base)
+			events.put(eventTime, new PauseEvent());
+			events.put(eventTime+2, makeLocustBaseBossEvent());
+			events.put(eventTime+4, new PauseEvent());
+			eventTime+=100;
+			
 			break;
 		}
 		
@@ -88,16 +114,47 @@ public class LocustLevelFactory implements LevelFactory {
 		return eventTime;
 	}
 	
+	/*--------------*/
+	/* Locust waves */
+	/*--------------*/
+	
+	private Event makeLocustSpawnEvent(int level) {
+		
+		// basic enemies
+		SpawnEvent event = new SpawnEvent();	
+		for(int i=0;i<3;i++) {
+			Enemy e = EnemyFactory.makeBasicEnemy(EnemyType.LOCUST_ARMOURED_DRONE);
+			e.setBehaviour(new StaticPositionBehaviour(
+					new Point2D(
+						Board.BOARD_SIZE/6f + i*Board.BOARD_SIZE/3f, 
+						Board.BOARD_SIZE/6f),
+					WAITTIME));
+			event.addEnemy(e);
+		}
+		
+		// drones
+		for(int i=0;i<6;i++)
+			event.addEnemy(EnemyFactory.makeBasicEnemy(EnemyType.LOCUST_DRONE));
+		
+		return event;
+	}
+	
 	/*-------------------*/
 	/* Locust Boss waves */
 	/*-------------------*/
-	
-	private Event makeLocustSpawnEvent() {
+
+	private Event makeLocustSpawnBossEvent() {
 		
 		SpawnEvent event = new SpawnEvent();
 		event.addEnemy(LocustSpawnBoss.makeBoss());
 		return event;
-		
+	}
+	
+	private Event makeLocustBaseBossEvent() {
+	
+		SpawnEvent event = new SpawnEvent();
+		event.addEnemy(LocustBaseBoss.makeBoss());
+		return event;
 	}
 	
 	/*-------------*/
@@ -147,9 +204,9 @@ public class LocustLevelFactory implements LevelFactory {
 		return event;
 	}
 
-	private Event makeMidBossSpawnEvent() {
+	private Event makeMidBossSpawnEvent(boolean locust) {
 		SpawnEvent event = new SpawnEvent();
-		event.addEnemy(EnemyFactory.makeLocustBoss());
+		event.addEnemy(EnemyFactory.makeLocustBoss(locust));
 		return event;
 	}	
 }
