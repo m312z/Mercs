@@ -53,6 +53,7 @@ public class BuilderBaseBoss extends Enemy {
 		Component core = new Component(Shape.scale(DefaultShapes.basicHex,Mech.MECH_RADIUS),new Point2D(),-1);
 		core.setColour(builderBossColor);		
 		components.add(core);
+		
 		for(int i=0;i<6;i++) {
 			if(encounter<4 && (i==2 || i==4))
 				continue;
@@ -60,10 +61,10 @@ public class BuilderBaseBoss extends Enemy {
 					Shape.scale(DefaultShapes.basicHex,Mech.MECH_RADIUS),
 					new Point2D(EnemyFactory.getXCoord(1,i),EnemyFactory.getYCoord(1,i)),
 					200);
-			c.setColour(builderBossColorDark[3]);		
+			c.setColour(builderBossColorDark[3]);
+			c.setShowHealth(true);
 			components.add(c);
 		}
-		
 		// secondary heads
 		Component[] secondaryHead = new Component[2];
 		if(encounter < 4) {
@@ -234,10 +235,9 @@ public class BuilderBaseBoss extends Enemy {
 		while(cit.hasNext()) {
 			Component c = cit.next();
 			Base b = new Base(c.getShape(), new Point2D(
-					c.getPos().x + c.getPos().x,
-					c.getPos().y + c.getPos().y));
-			if(encounter<4)
-				b.getDirection().y = -1;
+					pos.x + c.getPos().x,
+					pos.y + c.getPos().y));
+			if(encounter<4) b.getDirection().y = -1;
 			board.addBase(b);
 		}
 	}

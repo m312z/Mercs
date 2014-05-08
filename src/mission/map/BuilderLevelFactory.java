@@ -31,7 +31,7 @@ public class BuilderLevelFactory implements LevelFactory {
 	@Override
 	public float populate(int level, Map<Integer,Event> events, Map<Base,Event> baseEvents) {
 		
-		int waitTime = 240 + 40*(10-level);
+		int waitTime = 320 + 30*(10-level);
 		
 		// base
 		if(level==1) {
@@ -84,14 +84,14 @@ public class BuilderLevelFactory implements LevelFactory {
 					break;
 				case 1:
 					events.put(i,makeLaserEvent()); i++;
-					events.put(i,makeBuilderEvent(level/4));
+					events.put(i,makeBuilderEvent(2));
 					break;
 				}
 			}
 			break;
 			
 		}			
-			
+
 		// trains
 		if(!pillarWave && !bossWave)
 		for(int i=0;i<5+level;i++) {

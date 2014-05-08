@@ -8,12 +8,11 @@ import phys.Shape;
 public class Base extends SimpleMoveableObject {
 	
 	static float wrapY = (float)Math.ceil(Board.BOARD_SIZE/BaseFactory.hexOffsetY)*BaseFactory.hexOffsetY;
-	static Point2D direction = new Point2D(0,1);
 	
 	boolean wrap = false;
 	
 	public Base(Shape shape, Point2D pos) {
-		super(shape,pos,direction,Board.BOARD_SPEED);
+		super(shape,pos,new Point2D(0,1),Board.BOARD_SPEED);
 	}
 
 	public void setWrap(boolean wrap) {
