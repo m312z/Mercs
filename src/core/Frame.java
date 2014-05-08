@@ -46,6 +46,7 @@ import org.lwjgl.opengl.DisplayMode;
 
 import sound.SoundManager;
 import core.FileManager.LevelScore;
+import core.controller.AIController;
 import core.controller.MouseController;
 import core.controller.ShipController;
 import core.menu.ControllerSelectionScreen;
@@ -211,6 +212,8 @@ public class Frame {
 							localGame.addController(controllers[i]);
 							if(controllers[i] instanceof MouseController)
 								Mouse.setGrabbed(false);
+							else if(controllers[i] instanceof AIController)
+								((AIController)controllers[i]).setBoard(localGame.getBoard());
 						}
 					}
 					

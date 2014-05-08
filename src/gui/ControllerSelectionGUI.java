@@ -6,6 +6,7 @@ import static gui.OpenGLDraw.fillRect;
 import java.awt.Color;
 
 import mission.Board;
+import core.controller.AIController;
 import core.controller.KeyboardController;
 import core.controller.MouseController;
 import core.controller.XboxController;
@@ -73,6 +74,9 @@ public class ControllerSelectionGUI {
 						hudSize + 3*indent,
 						panelWidth - 6*indent,
 						panelHeight - 6*indent);
+				
+				if(selection.getControllers()[i] instanceof AIController)
+					continue;
 				
 				if(selection.getControllers()[i] instanceof KeyboardController) {
 					tex = TextureLoader.getInstance().getTexture("keyboardHelp2");

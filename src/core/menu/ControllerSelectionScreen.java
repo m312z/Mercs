@@ -2,8 +2,8 @@ package core.menu;
 
 import static core.Frame.SCREEN_SIZE;
 import gui.ControllerSelectionGUI;
-import gui.GameGUI;
 import gui.FontManager.FontType;
+import gui.GameGUI;
 import gui.ui.ButtonElement;
 import gui.ui.HudElement.InteractionType;
 import gui.ui.HudOverlay;
@@ -24,6 +24,7 @@ import org.lwjgl.opengl.Display;
 import phys.Point2D;
 import phys.Shape;
 import core.Frame;
+import core.controller.AIController;
 import core.controller.KeyboardController;
 import core.controller.MouseController;
 import core.controller.ShipController;
@@ -42,7 +43,9 @@ public class ControllerSelectionScreen extends SetupScreen {
 	boolean hotMouseDown = false;
 	
 	boolean keyboardSelected = false;
+	boolean AISelected = false;
 	boolean hotKeyboardDown = true;
+	
 	
 	boolean[] hotGamePadDown;
 	boolean[] gamepadSelected;
@@ -138,6 +141,22 @@ public class ControllerSelectionScreen extends SetupScreen {
 			} else if(hotKeyboardDown) {
 				// start game
 				finished = true;
+			}
+			hotKeyboardDown = false;
+		} else if(Keyboard.isKeyDown(Keyboard.KEY_N)) {
+			if(hotKeyboardDown && AISelected) {
+				AISelected = false;
+				if(controllers[0]!=null && controllers[0] instanceof AIController) controllers[0] = null;
+				else if(controllers[1]!=null && controllers[1] instanceof AIController) controllers[1] = null;
+			}
+			hotKeyboardDown = false;
+		} else if(Keyboard.isKeyDown(Keyboard.KEY_M)) {
+			if(hotKeyboardDown && !AISelected) {
+				int p = getFirstFree();
+				if(p>=0) {
+					AISelected = true;
+					controllers[p] = new AIController("player"+p,p);
+				}
 			}
 			hotKeyboardDown = false;
 		} else {
