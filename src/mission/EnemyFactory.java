@@ -1088,7 +1088,7 @@ public class EnemyFactory {
 		// weapon
 		Bullet b = new Bullet(e, true, Shape.scale(DefaultShapes.basicHex,Bullet.BULLET_RADIUS), new Point2D(), new Point2D());
 		b.getMods().put(BulletMod.GARGANTUA, 1);
-		c.setWeapon(new Weapon(b, 5f, ShotType.SPIRAL));
+		e.getComponents().get(0).setWeapon(new Weapon(b, 5f, ShotType.SPIRAL));
 		
 		// create behaviour
 		e.setAttackCycle(new MechAttack());

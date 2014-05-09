@@ -213,8 +213,7 @@ public class PowerEater {
 		case CLONE:
 			if(player.getComponents().get(0).getWeapon().getShotType()==ShotType.CLONERAY) {
 				player.getComponents().get(0).getWeapon().setShotType(player.getOriginalShotType());
-			} else
-				player.getComponents().get(0).getWeapon().setShotType(ShotType.CLONERAY);
+			} else player.getComponents().get(0).getWeapon().setShotType(ShotType.CLONERAY);
 			break;
 		case CLONE_SELFDESTRUCT:
 			if(clone!=null && !clone.isDead()) {

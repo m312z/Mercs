@@ -155,7 +155,7 @@ public class Weapon {
 		case CLONERAY:
 			if(shooter instanceof Player) {
 				Player p = (Player)shooter;
-				if(SupportFactory.cloneEnemy(p, p.getPos(), board));
+				if(SupportFactory.cloneEnemy(p, p.getPos(), board))
 					p.getComponents().get(0).getWeapon().setShotType(p.getOriginalShotType());
 			}
 			break;
