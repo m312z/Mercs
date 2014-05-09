@@ -57,7 +57,8 @@ public class EnemyFactory {
 		
 		// LOCUST
 		LOCUST_ARMOURED_DRONE,
-		LOCUST_DRONE
+		LOCUST_DRONE,
+		LOCUST_SPIRAL
 	}
 	
 	/**
@@ -125,6 +126,8 @@ public class EnemyFactory {
 			return makeArmouredStraightShot();
 		case LOCUST_DRONE:
 			return makeLocustDrone();
+		case LOCUST_SPIRAL:
+			return makeLocustSpiral();
 		case DRONE:
 		default:
 			return makeDrone();	
@@ -995,24 +998,30 @@ public class EnemyFactory {
 			Component c = new Component(Shape.scale(DefaultShapes.basicHex,Mech.MECH_RADIUS), new Point2D(), -1);
 			c.getPos().x = getXCoord(1, i);
 			c.getPos().y = getYCoord(1, i);
-			c.setColour(GameGUI.wreckage);
-			c.setIndestructable(true);
+			if(i==2 || i==4) {
+				c.setColour(GameGUI.wreckage);
+				c.setIndestructable(true);
+			} else {
+				c.setColour(LocustSpawnBoss.locustColorDark);
+				c.setHealth(15);
+			}
 			list.add(c);
 		}
 		
 		// make enemy
 		Enemy e = new Enemy(list,
 				new Point2D(),
-				new Point2D(), 30, Mech.MECH_SPEED);
+				new Point2D(), 60, Mech.MECH_SPEED);
 		
 		// weapon
 		Bullet b = new Bullet(e, true, Shape.scale(DefaultShapes.basicHex,Bullet.BULLET_RADIUS), new Point2D(), new Point2D());
 		b.getMods().put(BulletMod.MEGA, 1);
-		head.setWeapon(new Weapon(b, 20f, ShotType.STRAIGHTDUAL));
+		b.getMods().put(BulletMod.CLUSTER, 4);
+		head.setWeapon(new Weapon(b, 30f, ShotType.STRAIGHTDUAL));
 		
 		// behaviour
 		e.setAttackCycle(new MechAttack());
-		e.getAttackCycle().addVolley(e.getAttackCycle().new Volley(new Component[] {head},120,120));	
+		e.getAttackCycle().addVolley(e.getAttackCycle().new Volley(new Component[] {head},120,30));	
 		
 		// starting position
 		e.getPos().x = (float)(Board.BOARD_SIZE*Math.random());
@@ -1039,7 +1048,7 @@ public class EnemyFactory {
 		
 		// weapon
 		Bullet b = new Bullet(e, true, Shape.scale(DefaultShapes.basicHex,Bullet.BULLET_RADIUS), new Point2D(), new Point2D());
-		c.setWeapon(new Weapon(b, 10f, ShotType.STRAIGHTDUAL));
+		c.setWeapon(new Weapon(b, 10f, ShotType.TARGETEDBEAM));
 		
 		// create behaviour
 		e.setAttackCycle(new MechAttack());
@@ -1048,6 +1057,45 @@ public class EnemyFactory {
 		e.setBehaviour(new StaticPositionBehaviour(new Point2D(
 				(float)(Math.random()*Board.BOARD_SIZE), 
 				(float)(Math.random()*Board.BOARD_SIZE/3f)),WAITTIME));
+
+		return e;
+	}
+	
+	/**
+	 * @return straight-dual-shot enemy with StaticPositionBehaviour
+	 */
+	private static Enemy makeLocustSpiral() {
+		
+		// create body
+		List<Component> list = new ArrayList<Component>(1);
+		Component c = new Component(Shape.scale(DefaultShapes.basicHex,Mech.MECH_RADIUS), new Point2D(), -1);
+		c.setColour(LocustSpawnBoss.locustColor);
+		list.add(c);
+		
+		for(int i=0; i<6; i++) {
+			c = new Component(Shape.scale(DefaultShapes.basicHex,Mech.MECH_RADIUS), new Point2D(), 10);
+			c.setColour(LocustSpawnBoss.locustColorDark);
+			c.getPos().x = getXCoord(1, i);
+			c.getPos().y = getYCoord(1, i);
+			list.add(c);
+		}
+		
+		// make enemy
+		Enemy e = new Enemy(list,
+				new Point2D((float) (Board.BOARD_SIZE*Math.random()),-Mech.MECH_RADIUS),
+				new Point2D(), 30, Mech.MECH_SPEED);
+		
+		// weapon
+		Bullet b = new Bullet(e, true, Shape.scale(DefaultShapes.basicHex,Bullet.BULLET_RADIUS), new Point2D(), new Point2D());
+		b.getMods().put(BulletMod.GARGANTUA, 1);
+		c.setWeapon(new Weapon(b, 5f, ShotType.SPIRAL));
+		
+		// create behaviour
+		e.setAttackCycle(new MechAttack());
+		e.getAttackCycle().addVolley(e.getAttackCycle().new Volley(new Component[] {c},120,360));
+		
+		e.setBehaviour(new StaticPositionBehaviour(new Point2D(
+				Board.BOARD_SIZE/2f, Board.BOARD_SIZE/2f),WAITTIME));
 
 		return e;
 	}

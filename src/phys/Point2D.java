@@ -22,6 +22,11 @@ public class Point2D {
 		return (float) Math.sqrt(p.x*p.x + p.y*p.y);
 	}
 	
+	public static float distance(Point2D a, Point2D b) {
+		return (float) Math.sqrt(
+				(a.x - b.x)*(a.x - b.x)
+				+ (a.y - b.y)*(a.y - b.y));
+	}
 
 	public void rotate(float angle) {
 		float temp = x;

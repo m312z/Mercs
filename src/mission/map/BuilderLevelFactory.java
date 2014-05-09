@@ -1,5 +1,7 @@
 package mission.map;
 
+import static mission.Board.BOARD_SIZE;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -158,16 +160,17 @@ public class BuilderLevelFactory implements LevelFactory {
 		SpawnEvent event = new SpawnEvent();
 		Enemy p = EnemyFactory.makePillar(height);
 		event.addEnemy(p);
-		for(int i=0;i<height*6-weaponCount;i++) {
+		int total = height*6-weaponCount;
+		for(int i=0;i<total;i++) {
 			Enemy e = EnemyFactory.makeBasicEnemy(EnemyType.BUILDER_BASIC);
-			e.getPos().x = (e.getMaxX() - e.getMinX()) + (i%2)*Board.BOARD_SIZE+(e.getMaxX() - e.getMinX());
-			e.getPos().y = (i+1)*(Board.BOARD_SIZE/(float)(i+2));
+			e.getPos().x = (BOARD_SIZE/2f) + ((i%2)*2-1)*(e.getMaxX() + BOARD_SIZE/2f);
+			e.getPos().y = (BOARD_SIZE/2f)*(1 + i/total);
 			event.addEnemy(e);
 		}
 		for(int i=0;i<weaponCount;i++) {
 			Enemy e = EnemyFactory.makeBasicEnemy(EnemyType.BUILDER_ARMED);
-			e.getPos().x = (e.getMaxX() - e.getMinX()) + (i%2)*Board.BOARD_SIZE+(e.getMaxX() - e.getMinX());
-			e.getPos().y = (i+1)*(Board.BOARD_SIZE/(float)(i+2));
+			e.getPos().x = (BOARD_SIZE/2f) + ((i%2)*2-1)*(e.getMaxX() + BOARD_SIZE/2f);
+			e.getPos().y = (BOARD_SIZE/2f)*(2/3f + i/weaponCount);
 			event.addEnemy(e);
 		}
 		return event;

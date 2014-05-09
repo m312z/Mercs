@@ -1,16 +1,15 @@
 package mission.map;
 
+import static mission.Board.BOARD_SIZE;
 import static mission.EnemyFactory.WAITTIME;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import phys.Point2D;
-
-import mission.Board;
 import mission.EnemyFactory;
 import mission.EnemyFactory.EnemyType;
-import mission.behaviour.StaticPositionBehaviour;
+import mission.behaviour.RepeatingStaticBehaviour;
 import mission.boss.LocustBaseBoss;
 import mission.boss.LocustSpawnBoss;
 import mission.gameobject.Base;
@@ -18,6 +17,7 @@ import mission.gameobject.Enemy;
 import mission.map.event.Event;
 import mission.map.event.PauseEvent;
 import mission.map.event.SpawnEvent;
+import phys.Point2D;
 
 public class LocustLevelFactory implements LevelFactory {
 		
@@ -29,6 +29,8 @@ public class LocustLevelFactory implements LevelFactory {
 
 		int eventTime  = 0;
 	
+		level = 3;
+		
 		// wave details
 		switch(level) {
 		case 1:
@@ -89,24 +91,44 @@ public class LocustLevelFactory implements LevelFactory {
 			
 			// 200: start
 			eventTime = 200;
-			for(int i=0;i<2;i++) {
-				events.put(eventTime, makeLocustSpawnEvent(level));
-				eventTime+=WAITTIME + 100;
-				
+			events.put(eventTime, makeLocustSpawnEvent(level));
+			for(int i=0;i<4;i++) {
+				eventTime += WAITTIME;
+				events.put(eventTime, makeDroneSpawnEvent());
+				if(i==2) {
+					SpawnEvent event = new SpawnEvent();	
+					event.addEnemy(EnemyFactory.makeBasicEnemy(EnemyType.LOCUST_SPIRAL));
+					events.put(eventTime+20, event);
+				}
 			}
+			eventTime += 100 + WAITTIME;
 			
-			// 400 + 2*W: mid-boss 
+			// 300 + 5*W: mid-boss 
 			events.put(eventTime, new PauseEvent());
 			events.put(eventTime+2, makeMidBossSpawnEvent(true));
 			events.put(eventTime+4, new PauseEvent());
 			eventTime+=100;
 			
-			// 500 + 2*W: locust boss (base)
+			// 400 + 5*W: more drones
+			events.put(eventTime, makeLocustSpawnEvent(level));
+			for(int i=0;i<4;i++) {
+				eventTime += WAITTIME;
+				events.put(eventTime, makeDroneSpawnEvent());
+				if(i==2) {
+					SpawnEvent event = new SpawnEvent();	
+					event.addEnemy(EnemyFactory.makeBasicEnemy(EnemyType.LOCUST_SPIRAL));
+					events.put(eventTime+20, event);
+				}
+			}
+			eventTime += 100 + WAITTIME;
+			
+			// 500 + 10*W: locust boss (base)
 			events.put(eventTime, new PauseEvent());
 			events.put(eventTime+2, makeLocustBaseBossEvent());
 			events.put(eventTime+4, new PauseEvent());
 			eventTime+=100;
 			
+			// 600 + 10*W: finish
 			break;
 		}
 		
@@ -119,23 +141,26 @@ public class LocustLevelFactory implements LevelFactory {
 	/*--------------*/
 	
 	private Event makeLocustSpawnEvent(int level) {
-		
-		// basic enemies
+
 		SpawnEvent event = new SpawnEvent();	
-		for(int i=0;i<3;i++) {
-			Enemy e = EnemyFactory.makeBasicEnemy(EnemyType.LOCUST_ARMOURED_DRONE);
-			e.setBehaviour(new StaticPositionBehaviour(
-					new Point2D(
-						Board.BOARD_SIZE/6f + i*Board.BOARD_SIZE/3f, 
-						Board.BOARD_SIZE/6f),
-					WAITTIME));
-			event.addEnemy(e);
+		List<Point2D> positions = new ArrayList<Point2D>();
+		for(int i=0;i<5;i++) {
+			positions.add(new Point2D(
+					(i+1)*BOARD_SIZE/6f, 
+					(i%2+1)*BOARD_SIZE/6f));
 		}
+		Enemy e = EnemyFactory.makeBasicEnemy(EnemyType.LOCUST_ARMOURED_DRONE);
+		e.setBehaviour(new RepeatingStaticBehaviour(positions, WAITTIME));
+		event.addEnemy(e);
 		
-		// drones
-		for(int i=0;i<6;i++)
+		return event;
+	}
+	
+	private Event makeDroneSpawnEvent() {
+		
+		SpawnEvent event = new SpawnEvent();
+		for(int i=0;i<3;i++)
 			event.addEnemy(EnemyFactory.makeBasicEnemy(EnemyType.LOCUST_DRONE));
-		
 		return event;
 	}
 	
