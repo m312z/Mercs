@@ -140,6 +140,7 @@ public class EnemyFactory {
 		float fireDelay = (float) (Math.random()*10);
 		
 		switch(st) {
+		case DIRECTEDBEAM:
 		case STRAIGHT:
 			st = ShotType.TARGETEDBEAM;
 			fireDelay = 3f;
@@ -169,8 +170,6 @@ public class EnemyFactory {
 			break;
 		case ASTEROID:
 			fireDelay = 120;
-			break;
-		default:
 			break;
 		}
 		
