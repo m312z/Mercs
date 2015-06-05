@@ -42,14 +42,14 @@ public class SoundManager {
 	public static void init() {
 		SoundStore.get().setMaxSources(16);
 		soundsLoaded = 0;
-//		try {
-//			oggEffect01 = AudioLoader.getAudio("OGG", ResourceLoader.getResourceAsStream("sound/Smash02Locust.ogg"));
-//			soundsLoaded++;
-//			oggEffect02 = AudioLoader.getAudio("OGG", ResourceLoader.getResourceAsStream("sound/Smash05Dose.ogg"));
-//			soundsLoaded++;
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//		}
+		try {
+			oggEffect01 = AudioLoader.getAudio("OGG", ResourceLoader.getResourceAsStream("sound/Smash02Locust.ogg"));
+			soundsLoaded++;
+			oggEffect02 = AudioLoader.getAudio("OGG", ResourceLoader.getResourceAsStream("sound/Smash05Dose.ogg"));
+			soundsLoaded++;
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 		
 	public static void startMusic(LevelType levelType) {

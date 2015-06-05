@@ -399,7 +399,7 @@ public class Frame {
 						Display.getDisplayMode().getHeight(), 0, 1, -1);
 				glMatrixMode(GL_MODELVIEW);
 			}
-
+			
 			// set the screen size vars...
 			SCREEN_SIZE[0] = targetDisplayMode.getWidth();
 			SCREEN_SIZE[1] = targetDisplayMode.getHeight();
