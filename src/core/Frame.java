@@ -28,6 +28,7 @@ import static org.lwjgl.opengl.GL11.glViewport;
 import gui.FontManager;
 
 import java.awt.Toolkit;
+import java.io.File;
 import java.util.Iterator;
 
 import mission.Mission;
@@ -76,7 +77,7 @@ public class Frame {
 	
 	/* Various dimensions */
 	public static boolean FULLSCREEN = false;
-	public static int[] WINDOW_SIZE = { (int)(1280/2),(int)(720/2) };
+	public static int[] WINDOW_SIZE = { (int)(1024),(int)(576) };
 	public static int[] SCREEN_SIZE = { WINDOW_SIZE[0], WINDOW_SIZE[1] };
 	public static float FONT_SCALE = SCREEN_SIZE[0]/1280f;
 	
@@ -416,6 +417,7 @@ public class Frame {
 	/*-------------*/
 
 	public static void main(String[] args) {
+		System.setProperty("org.lwjgl.librarypath", new File("resource").getAbsolutePath());
 		Frame p = new Frame();
 		p.start();
 	}
